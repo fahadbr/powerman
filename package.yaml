@@ -21,12 +21,13 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- directory
 
 library:
   source-dirs: src
 
 executables:
-  powerman-exe:
+  powerman:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

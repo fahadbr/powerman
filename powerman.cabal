@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9422bf2bfd444439b4289fe44e50171192430499fce52bc54c19d72e5e0409a5
+-- hash: 4e018b65cf308bd06f59b8ee258ceb28451d966e9310ca1bbc570c23f3be6acb
 
 name:           powerman
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Dimmer
       Lib
   other-modules:
       Paths_powerman
@@ -34,9 +35,10 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , directory
   default-language: Haskell2010
 
-executable powerman-exe
+executable powerman
   main-is: Main.hs
   other-modules:
       Paths_powerman
@@ -45,6 +47,7 @@ executable powerman-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , directory
     , powerman
   default-language: Haskell2010
 
@@ -58,5 +61,6 @@ test-suite powerman-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , directory
     , powerman
   default-language: Haskell2010

@@ -1,6 +1,11 @@
 module Main where
 
-import Lib
+import Dimmer
+import System.Environment
 
 main :: IO ()
-main = someFunc
+main = do
+  args <- getArgs
+  case args of
+    ("dim":_) -> dim
+    ("restore":_) -> restore
