@@ -8,9 +8,11 @@ targetDimDurationMs = 300
 targetUndimDurationMs = 300
 targetFPS = 60
 targetDimBrightness= 100
-usPerFrame = div (1 * 1000000) targetFPS
 lastBrightnessFile = "/home/fahad/.local/lastbrightness"
 brightnessFile = "/sys/class/backlight/intel_backlight/brightness"
+-- >>> usPerFrame
+-- 16666
+usPerFrame = div (1 * 1000000) targetFPS
 
 dim :: IO ()
 dim = do
@@ -40,6 +42,11 @@ readB f = do
 writeB :: FilePath -> Int -> IO ()
 writeB f b = writeFile f $ show b
 
+{-|
+   transition will call genIncrements to generate brightness
+   increments and apply them to the brightnessFile with a fixed
+   delay in between each apply
+-}
 transition :: Int -> Int -> Int -> IO ()
 transition targetB targetD currentB = forM_ bIncrements $ \b -> do
   writeB brightnessFile b
