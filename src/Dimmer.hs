@@ -45,7 +45,6 @@ transition targetB targetD currentB = forM_ bIncrements $ \b -> do
   writeB brightnessFile b
   threadDelay usPerFrame
   where inc = (currentB - targetB) `div` ((targetFPS * targetD) `div` 1000)
-        --endCondition = if targetB > currentB then (>=) else (<=)
         bIncrements = genIncrements currentB inc targetB
 
 -- >>> genIncrements 5000 500 100
@@ -58,8 +57,11 @@ transition targetB targetD currentB = forM_ bIncrements $ \b -> do
 -- [5000]
 genIncrements :: Int -> Int -> Int -> [Int]
 genIncrements current 0 _ = [current]
-genIncrements current inc target
-  | compareF current target = [target]
-  | otherwise = current : genIncrements (current - inc) inc target
-  where compareF = if inc < 0 then (>=) else (<=)
+genIncrements current inc target =
+  let compareF = if inc < 0 then (>=) else (<=)
+      doGen c
+        | compareF c target = [target]
+        | otherwise = c : doGen (c - inc)
+      in doGen current
+
 
