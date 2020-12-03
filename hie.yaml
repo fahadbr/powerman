@@ -1,2 +1,13 @@
 cradle:
   stack:
+    - path: "./src"
+      component: "powerman:lib"
+
+    - path: "./app/Main.hs"
+      component: "powerman:exe:powerman"
+
+    - path: "./app/Paths_powerman.hs"
+      component: "powerman:exe:powerman"
+
+    - path: "./test"
+      component: "powerman:test:powerman-test"

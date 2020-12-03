@@ -1,4 +1,4 @@
-module Dimmer (dim, restore) where
+module Dimmer (dim, restore, genIncrements) where
 
 import           Control.Concurrent (threadDelay)
 import           Control.Monad
@@ -51,7 +51,7 @@ transition :: Int -> Int -> Int -> IO ()
 transition targetB targetD currentB = forM_ bIncrements $ \b -> do
   writeB brightnessFile b
   threadDelay usPerFrame
-  where inc = (currentB - targetB) `div` ((targetFPS * targetD) `div` 1000)
+  where inc = abs (currentB - targetB) `div` ((targetFPS * targetD) `div` 1000)
         bIncrements = genIncrements currentB inc targetB
 
 -- >>> genIncrements 5000 500 100
@@ -63,12 +63,15 @@ transition targetB targetD currentB = forM_ bIncrements $ \b -> do
 -- >>> genIncrements 100 500 5000
 -- [5000]
 genIncrements :: Int -> Int -> Int -> [Int]
-genIncrements current 0 _ = [current]
-genIncrements current inc target =
-  let compareF = if inc < 0 then (>=) else (<=)
-      doGen c
-        | compareF c target = [target]
-        | otherwise = c : doGen (c - inc)
-      in doGen current
+genIncrements current inc target
+  | inc <= 0 = [current]
+  | current == target = [current]
+  | otherwise =
+    let compareF = if current < target then (>=) else (<=)
+        effectiveInc = if current < target then (-inc) else inc
+        doGen c
+          | compareF c target = [target]
+          | otherwise = c : doGen (c - effectiveInc)
+        in doGen current
 
 

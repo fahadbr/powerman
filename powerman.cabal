@@ -4,17 +4,16 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4e018b65cf308bd06f59b8ee258ceb28451d966e9310ca1bbc570c23f3be6acb
+-- hash: d6aa70cbd2decfd6f076ea2f058ff344edea261d7215afb605010c9d424538e1
 
 name:           powerman
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/powerman#readme>
-homepage:       https://github.com/githubuser/powerman#readme
-bug-reports:    https://github.com/githubuser/powerman/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2020 Author name here
-license:        BSD3
+description:    Please see the README on GitHub at <https://github.com/fahadbr/powerman#readme>
+homepage:       https://github.com/fahadbr/powerman#readme
+bug-reports:    https://github.com/fahadbr/powerman/issues
+author:         Fahad Riaz
+maintainer:     fahadbr@gmail.com
+license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
@@ -23,7 +22,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/powerman
+  location: https://github.com/fahadbr/powerman
 
 library
   exposed-modules:
@@ -55,6 +54,7 @@ test-suite powerman-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      DimmerSpec
       Paths_powerman
   hs-source-dirs:
       test
@@ -62,5 +62,6 @@ test-suite powerman-test
   build-depends:
       base >=4.7 && <5
     , directory
+    , hspec
     , powerman
   default-language: Haskell2010
