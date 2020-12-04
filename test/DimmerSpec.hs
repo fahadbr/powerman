@@ -5,7 +5,7 @@ import Test.Hspec
 
 spec = describe "Dimmer genIncrements" $ do
   it "should create a decreasing list of values when target > current" $ do
-    genIncrements 10 1 5 `shouldBe` [10, 9, 8, 7, 6, 5]
+    genIncrements 10 (-1) 5 `shouldBe` [10, 9, 8, 7, 6, 5]
 
   it "should create an increasing list of values when current < target" $ do
     genIncrements 5 1 7 `shouldBe` [5, 6, 7]

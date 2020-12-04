@@ -51,27 +51,13 @@ transition :: Int -> Int -> Int -> IO ()
 transition targetB targetD currentB = forM_ bIncrements $ \b -> do
   writeB brightnessFile b
   threadDelay usPerFrame
-  where inc = abs (currentB - targetB) `div` ((targetFPS * targetD) `div` 1000)
+  where inc = (targetB - currentB) `div` ((targetFPS * targetD) `div` 1000)
         bIncrements = genIncrements currentB inc targetB
 
--- >>> genIncrements 5000 500 100
--- [5000,4500,4000,3500,3000,2500,2000,1500,1000,500,100]
--- >>> genIncrements 100 (-500) 5000
--- [100,600,1100,1600,2100,2600,3100,3600,4100,4600,5000]
--- >>> genIncrements 100 0 5000
--- [100]
--- >>> genIncrements 100 500 5000
--- [5000]
 genIncrements :: Int -> Int -> Int -> [Int]
-genIncrements current inc target
-  | inc <= 0 = [current]
-  | current == target = [current]
-  | otherwise =
-    let compareF = if current < target then (>=) else (<=)
-        effectiveInc = if current < target then (-inc) else inc
-        doGen c
-          | compareF c target = [target]
-          | otherwise = c : doGen (c - effectiveInc)
-        in doGen current
-
-
+genIncrements current inc target =
+  reverse $ case [target, target - inc..current] of
+    all@(x:_)
+      | x == target -> all
+      | otherwise -> target:all
+    [] -> [current]
