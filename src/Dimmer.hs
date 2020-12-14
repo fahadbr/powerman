@@ -56,8 +56,6 @@ transition targetB targetD currentB = forM_ bIncrements $ \b -> do
 
 genIncrements :: Int -> Int -> Int -> [Int]
 genIncrements current inc target =
-  reverse $ case [target, target - inc..current] of
-    all@(x:_)
-      | x == target -> all
-      | otherwise -> target:all
-    [] -> [current]
+  case [target, target - inc..current] of
+    []  -> [current]
+    all -> reverse all
