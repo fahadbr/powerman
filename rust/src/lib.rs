@@ -1,5 +1,6 @@
-mod commands;
 pub mod dimmer;
+pub mod config;
+mod commands;
 mod sources;
 
 use crate::{commands::*, sources::*};

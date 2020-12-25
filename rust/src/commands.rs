@@ -1,6 +1,6 @@
 use std::{thread::sleep, time::Duration};
 
-use crate::{check_cmd_output, dimmer};
+use crate::{check_cmd_output, config::DimmerConfig, dimmer};
 use anyhow::Result;
 
 pub trait Actions {
@@ -15,11 +15,11 @@ pub struct Commands {}
 
 impl Actions for Commands {
     fn dim() -> Result<()> {
-        dimmer::dim(dimmer::Config::default())
+        dimmer::dim(DimmerConfig::default())
     }
 
     fn restore() -> Result<()> {
-        dimmer::restore(dimmer::Config::default())
+        dimmer::restore(DimmerConfig::default())
     }
 
     fn lock() -> Result<()> {
