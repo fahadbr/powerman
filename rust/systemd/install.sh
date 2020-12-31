@@ -11,9 +11,11 @@ for f in powerman@.service 99-powerman.rules; do
 	[[ ! -f ./systemd/$f ]] && echo "$f not in current working directory" && exit 1
 done
 
-homedir=/home/$(logname)
+ln -vsfT $cwd/systemd/powerman@.service $HOME/.config/systemd/user/powerman@.service
 
-ln -vsfT $cwd/systemd/powerman@.service $homedir/.config/systemd/user/powerman@.service
+cfg_dest=$HOME/.config/powerman.yaml
+[[ -f $cfg_dest ]] || cp examples/config.yaml $cfg_dest
+
 systemctl --user daemon-reload
 cargo install --bins --path .
 
