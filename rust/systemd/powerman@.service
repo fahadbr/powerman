@@ -1,0 +1,11 @@
+[Unit]
+Description=Simple Power Manager Daemon (%i mode)
+Conflicts=powerman@bat.service powerman@ac.service
+
+[Service]
+Environment="POWERMAN_CONFIG=/home/fahad/.config/powerman.yaml"
+ExecStart=/home/fahad/.cargo/bin/powerman %I
+Restart=no
+
+[Install]
+WantedBy=default.target

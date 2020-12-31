@@ -49,7 +49,6 @@ pub fn run<A: Actions, S: Source>(profile: &str) -> Result<()> {
         };
 
         let effective_idle_time = idle_time - audio_idle_time;
-        println!("idle for {:?}", effective_idle_time);
 
         for handler in handlers.iter_mut() {
             handler.handle(&cfg, effective_idle_time)?;

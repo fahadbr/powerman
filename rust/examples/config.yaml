@@ -18,7 +18,7 @@ timeouts:
   bat:
     dim: 60
     dpms: 120
-    lock: 0
+    lock: 600
     sleep: 900
   test:
     dim: 2
