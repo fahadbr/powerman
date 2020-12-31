@@ -1,5 +1,5 @@
 use anyhow::Result;
-use std::{collections::HashMap, fs::File, io::prelude::*, path::Path};
+use std::{collections::HashMap, env, fs::File, io::prelude::*, path::Path};
 
 use serde::Deserialize;
 
@@ -7,14 +7,15 @@ use serde::Deserialize;
 pub struct Config {
     pub dimmer: DimmerConfig,
     pub timeouts: HashMap<String, Timeouts>,
+    pub lock_cmd: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct Timeouts {
-    pub dim: usize,
-    pub dpms: usize,
-    pub lock: usize,
-    pub sleep: usize,
+    pub dim: u64,
+    pub dpms: u64,
+    pub lock: u64,
+    pub sleep: u64,
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
@@ -44,7 +45,7 @@ impl Default for DimmerConfig {
         let delay = 1000u64 / fps as u64;
         Self {
             files: Files {
-                last_b: env!("HOME").to_owned() + "/.local/lastbrightness",
+                last_b: env!("HOME").to_string() + "/.local/lastbrightness",
                 current_b: "/sys/class/backlight/intel_backlight/brightness".to_string(),
             },
             targets: Targets {
@@ -80,6 +81,7 @@ mod tests {
     fn config_test() {
         let yaml_input = "
 ---
+lock_cmd: /tmp/lock.sh
 dimmer:
   files:
     last_b: /path/last_b
@@ -104,6 +106,7 @@ timeouts:
 ";
         let deserialized_cfg = Config::from_yaml_str(yaml_input).unwrap();
         let expected_cfg = Config {
+            lock_cmd: String::from("/tmp/lock.sh"),
             dimmer: DimmerConfig {
                 files: Files {
                     last_b: String::from("/path/last_b"),

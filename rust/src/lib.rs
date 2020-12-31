@@ -1,26 +1,60 @@
-pub mod dimmer;
-pub mod config;
 mod commands;
+pub mod config;
+pub mod dimmer;
 mod sources;
 
-use crate::{commands::*, sources::*};
+use crate::{commands::*, config::Config, sources::*};
 use anyhow::{anyhow, Context, Result};
 use std::{
+    env,
+    path::Path,
     process::{Command, Output},
-    time,
+    time::{self, Duration},
 };
 
 pub use commands::Commands;
 pub use sources::RealSource;
 
-pub fn run<A: Actions, S: Source>() -> Result<()> {
+pub fn run<A: Actions, S: Source>(profile: &str) -> Result<()> {
+    const CFG_VAR: &str = "POWERMAN_CONFIG";
+
     check_cmd_exists("xprintidle")?;
     check_cmd_exists("pacmd")?;
 
-    let sleep_time = time::Duration::from_secs(2);
+    let cfg = Config::new(Path::new(&env::var(CFG_VAR).context(CFG_VAR)?))?;
+
+    let timeouts = cfg
+        .timeouts
+        .get(profile)
+        .ok_or_else(|| anyhow!("no timeouts defined for {}", profile))?;
+
+    let mut handlers: Vec<_> = vec![
+        ActionWrapper::new(timeouts.dim, A::dim, Some(A::restore)),
+        ActionWrapper::new(timeouts.dpms, A::monitor_standby, None),
+        ActionWrapper::new(timeouts.lock, A::lock, None),
+        ActionWrapper::new(timeouts.sleep, A::suspend, None),
+    ]
+    .into_iter()
+    .filter(|a| a.timeout != Duration::default())
+    .collect();
+
+    let sleep_time = time::Duration::from_millis(250);
     loop {
         let idle_time = S::get_idle_time()?;
-        println!("idle for {}", idle_time);
+
+        let audio_idle_time = if S::audio_running()? {
+            idle_time
+        } else {
+            Duration::default()
+        };
+
+        let effective_idle_time = idle_time - audio_idle_time;
+        println!("idle for {:?}", effective_idle_time);
+
+        for handler in handlers.iter_mut() {
+            handler.handle(&cfg, effective_idle_time)?;
+        }
+
         A::delay(sleep_time);
     }
 }

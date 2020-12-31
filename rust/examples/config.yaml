@@ -1,0 +1,23 @@
+lock_cmd: /home/fahad/.dotfiles/scripts/powerman/lock.sh
+dimmer:
+  files:
+    last_b: /home/fahad/.local/lastbrightness
+    current_b: /sys/class/backlight/intel_backlight/brightness
+  targets:
+    dim_dur: 300
+    undim_dur: 300
+    dimmed_b: 100
+    fps: 60
+    delay: 16
+timeouts:
+  ac:
+    dim: 60
+    dpms: 1800
+    lock: 600
+    sleep: 0
+  bat:
+    dim: 60
+    dpms: 120
+    lock: 0
+    sleep: 900
+

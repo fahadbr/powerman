@@ -10,7 +10,7 @@ use std::{
 
 use crate::config::DimmerConfig;
 
-pub fn dim(cfg: DimmerConfig) -> Result<()> {
+pub fn dim(cfg: &DimmerConfig) -> Result<()> {
     let last_b_file = Path::new(&cfg.files.last_b);
     if last_b_file.exists() {
         return Ok(());
@@ -21,7 +21,7 @@ pub fn dim(cfg: DimmerConfig) -> Result<()> {
     write_b(last_b_file, current_b_val)
 }
 
-pub fn restore(cfg: DimmerConfig) -> Result<()> {
+pub fn restore(cfg: &DimmerConfig) -> Result<()> {
     let last_b_file = Path::new(&cfg.files.last_b);
     if !last_b_file.exists() {
         return Ok(());
@@ -30,7 +30,7 @@ pub fn restore(cfg: DimmerConfig) -> Result<()> {
     let last_b_path = Path::new(&cfg.files.last_b);
     let last_b_val = read_b(last_b_path)?;
     let current_b_val = read_b(Path::new(&cfg.files.current_b))?;
-    transition(&cfg, current_b_val, last_b_val, cfg.targets.undim_dur)?;
+    transition(cfg, current_b_val, last_b_val, cfg.targets.undim_dur)?;
 
     Ok(remove_file(last_b_path)?)
 }
