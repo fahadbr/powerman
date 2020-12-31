@@ -1,7 +1,7 @@
-use std::{thread::sleep, time::Duration};
+use std::{process::Command, thread::sleep, time::Duration};
 
-use crate::{check_cmd_output, config::Config, dimmer};
-use anyhow::Result;
+use crate::{config::Config, dimmer};
+use anyhow::{Context, Result};
 
 // originally made this a trait so that i could mock the functions
 pub trait Actions {
@@ -25,27 +25,36 @@ impl Actions for Commands {
     }
 
     fn monitor_standby(_cfg: &Config) -> Result<()> {
-        println!("running monitor standby");
-        check_cmd_output(
+        spawn_cmd(
             &["xset", "dpms", "force", "standby"],
             "failed to set monitor to standby",
-            |_| Ok(()),
         )
     }
 
     fn lock(cfg: &Config) -> Result<()> {
-        println!("running lock");
-        check_cmd_output(&[&cfg.lock_cmd], "failed to lock", |_| Ok(()))
+        spawn_cmd(&[&cfg.lock_cmd], "failed to lock")
     }
 
     fn suspend(_cfg: &Config) -> Result<()> {
-        println!("running suspend");
-        check_cmd_output(&["systemctl", "suspend"], "failed to suspend", |_| Ok(()))
+        spawn_cmd(&["systemctl", "suspend"], "failed to suspend")
     }
 
     fn delay(d: Duration) {
         sleep(d)
     }
+}
+
+fn spawn_cmd(cmdargs: &[&str], context: &'static str) -> Result<()> {
+    assert!(!cmdargs.is_empty());
+
+    let cmd = cmdargs[0];
+    let args = cmdargs.split_at(1).1;
+
+    Command::new(cmd)
+        .args(args)
+        .spawn()
+        .map(|_| ())
+        .context(context)
 }
 
 type ActionFn = fn(cfg: &Config) -> Result<()>;

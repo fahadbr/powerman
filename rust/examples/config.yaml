@@ -20,4 +20,10 @@ timeouts:
     dpms: 120
     lock: 0
     sleep: 900
+  test:
+    dim: 2
+    lock: 4
+    dpms: 6
+    sleep: 900
+
 
