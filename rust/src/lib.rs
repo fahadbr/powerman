@@ -49,7 +49,7 @@ pub fn run<A: Actions, S: Source>(profile: &str) -> Result<()> {
             // if audio is running, freeze idle_time by setting
             // audio_idle_time equal to idle_time
             idle_time
-        } else if idle_time > audio_idle_time{
+        } else if idle_time > audio_idle_time {
             // if audio isnt running and we're still idle
             // return the last audio_idle_time so that it seems
             // like we only went idle after the audio stopped playing
