@@ -5,6 +5,7 @@ mod sources;
 
 use crate::{commands::*, config::Config, sources::*};
 use anyhow::{anyhow, Context, Result};
+use log::trace;
 use std::{
     env,
     path::Path,
@@ -38,18 +39,29 @@ pub fn run<A: Actions, S: Source>(profile: &str) -> Result<()> {
     .filter(|a| a.timeout != Duration::default())
     .collect();
 
+    let mut audio_idle_time = Duration::default();
     let sleep_time = time::Duration::from_millis(250);
+
     loop {
         let idle_time = S::get_idle_time()?;
 
-        let audio_idle_time = if S::audio_running()? {
+        audio_idle_time = if S::audio_running()? {
+            // if audio is running, freeze idle_time by setting
+            // audio_idle_time equal to idle_time
             idle_time
+        } else if idle_time > audio_idle_time{
+            // if audio isnt running and we're still idle
+            // return the last audio_idle_time so that it seems
+            // like we only went idle after the audio stopped playing
+            audio_idle_time
         } else {
+            // otherwise reset the audio_idle_time
             Duration::default()
         };
 
         let effective_idle_time = idle_time - audio_idle_time;
 
+        trace!("effectivly idle for {:?}", effective_idle_time);
         for handler in handlers.iter_mut() {
             handler.handle(&cfg, effective_idle_time)?;
         }
