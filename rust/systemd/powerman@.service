@@ -4,6 +4,7 @@ Conflicts=powerman@bat.service powerman@ac.service
 
 [Service]
 Environment="POWERMAN_CONFIG=%h/.config/powerman.yaml"
+Environment="RUST_LOG=info"
 ExecStart=%h/.cargo/bin/powerman %I
 Restart=no
 

@@ -2,6 +2,7 @@ use std::{process::Command, thread::sleep, time::Duration};
 
 use crate::{config::Config, dimmer};
 use anyhow::{Context, Result};
+use log::info;
 
 // originally made this a trait so that i could mock the functions
 pub trait Actions {
@@ -46,6 +47,7 @@ impl Actions for Commands {
 
 fn spawn_cmd(cmdargs: &[&str], context: &'static str) -> Result<()> {
     assert!(!cmdargs.is_empty());
+    info!("running cmd: {:?}", cmdargs);
 
     let cmd = cmdargs[0];
     let args = cmdargs.split_at(1).1;
