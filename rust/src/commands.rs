@@ -63,14 +63,16 @@ type ActionFn = fn(cfg: &Config) -> Result<()>;
 
 pub struct ActionWrapper {
     pub timeout: Duration,
+    pub name: &'static str,
     active: bool,
     active_action: ActionFn,
     cancel_action: Option<ActionFn>,
 }
 
 impl ActionWrapper {
-    pub fn new(timeout: u64, active_action: ActionFn, cancel_action: Option<ActionFn>) -> Self {
+    pub fn new(name: &'static str, timeout: u64, active_action: ActionFn, cancel_action: Option<ActionFn>) -> Self {
         Self {
+            name,
             active: false,
             timeout: Duration::from_secs(timeout),
             active_action,

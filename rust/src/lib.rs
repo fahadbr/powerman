@@ -5,7 +5,7 @@ mod sources;
 
 use crate::{commands::*, config::Config, sources::*};
 use anyhow::{anyhow, Context, Result};
-use log::trace;
+use log::{info, trace};
 use std::{
     env,
     path::Path,
@@ -30,14 +30,19 @@ pub fn run<A: Actions, S: Source>(profile: &str) -> Result<()> {
         .ok_or_else(|| anyhow!("no timeouts defined for {}", profile))?;
 
     let mut handlers: Vec<_> = vec![
-        ActionWrapper::new(timeouts.dim, A::dim, Some(A::restore)),
-        ActionWrapper::new(timeouts.dpms, A::monitor_standby, None),
-        ActionWrapper::new(timeouts.lock, A::lock, None),
-        ActionWrapper::new(timeouts.sleep, A::suspend, None),
+        ActionWrapper::new("dim", timeouts.dim, A::dim, Some(A::restore)),
+        ActionWrapper::new("dpms", timeouts.dpms, A::monitor_standby, None),
+        ActionWrapper::new("lock", timeouts.lock, A::lock, None),
+        ActionWrapper::new("sleep",timeouts.sleep, A::suspend, None),
     ]
     .into_iter()
     .filter(|a| a.timeout != Duration::default())
     .collect();
+
+    info!("started powerman with config {}", profile);
+    for handler in &handlers {
+        info!("name: {}, timeout: {:?}", handler.name, handler.timeout)
+    }
 
     let mut audio_idle_time = Duration::default();
     let sleep_time = time::Duration::from_millis(250);
