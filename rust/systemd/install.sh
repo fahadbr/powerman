@@ -20,13 +20,13 @@ systemctl --user daemon-reload
 cargo install --bins --path .
 
 runsudostuff() {
-	sudo ln -vsfT $cwd/systemd/99-powerman.rules /etc/udev/rules.d/99-powerman.rules
+	#sudo ln -vsfT $cwd/systemd/99-powerman.rules /etc/udev/rules.d/99-powerman.rules
 	sudo ln -vsfT $cwd/systemd/resume-lock@.service /etc/systemd/system/resume-lock@.service
 
 	sudo systemctl enable resume-lock@$(logname).service
 
-	echo "reloading udev rules"
-	sudo udevadm control --reload-rules && sudo udevadm trigger
+	#echo "reloading udev rules"
+	#sudo udevadm control --reload-rules && sudo udevadm trigger
 }
 
 runsudostuff
